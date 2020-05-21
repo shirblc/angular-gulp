@@ -30,6 +30,7 @@
     "@angular/platform-browser-dynamic": "^9.1.7",
     "@angular/router": "^9.1.7",
     "autoprefixer": "^9.7.5",
+    "browser-sync": "^2.26.7",
     "gulp-concat": "^2.6.1",
     "gulp-jasmine-browser": "^4.1.0",
     "gulp-order": "^1.2.0",

@@ -7,6 +7,7 @@ const sourcemaps = require("gulp-sourcemaps");
 const jasmineBrowser = require('gulp-jasmine-browser');
 const typescript = require("gulp-typescript");
 const webpack = require("webpack-stream");
+const browserSync = require("browser-sync").create();
 
 //copies the html to the disribution folder
 function copyHtml()
@@ -114,6 +115,15 @@ function browserTests()
 		.pipe(jasmineBrowser.server({ port: 3001 }));
 }
 
+//boot up the server
+gulp.task("serve", function() {
+	browserSync.init({
+		server: {
+			baseDir: "./dist"
+		}
+	});
+});
+
 //prepare for distribution
 function dist()
 {
@@ -121,8 +131,8 @@ function dist()
 		.parallel(
 			copyHtml,
 			copyIndex,
-			copyImgs, 
-			styles, 
+			copyImgs,
+			styles,
 			scriptsDist
 		);
 }

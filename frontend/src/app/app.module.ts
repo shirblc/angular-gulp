@@ -12,6 +12,7 @@ import { ErrorPage } from './components/errorPage/errorPage.component';
     AppRoutingModule
   ],
   declarations: [
+    AppComponent,
     ErrorPage
   ],
   providers: [

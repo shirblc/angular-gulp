@@ -12,6 +12,7 @@ const tsify = require("tsify");
 const source = require("vinyl-source-stream");
 const buffer = require("vinyl-buffer");
 const rename = require("gulp-rename");
+const replace = require("gulp-replace");
 
 //copies the html to the disribution folder
 function copyHtml()
@@ -59,6 +60,11 @@ function scripts()
       .pipe(source("src/main.ts"))
       .pipe(buffer())
       .pipe(sourcemaps.init({loadMaps: true}))
+				.pipe(replace(/(templateUrl: '.)(.*)(.component.html)/g, (match) => {
+					let componentName = match.substring(15, match.length-15);
+					let newString = `templateUrl: './app/${componentName}.component.html`
+					return newString;
+				}))
         .pipe(babel({presets: ["@babel/preset-env"]}))
 				.pipe(rename("app.bundle.js"))
       .pipe(sourcemaps.write("./"))
@@ -76,6 +82,11 @@ function scriptsDist()
       .pipe(source("src/main.ts"))
       .pipe(buffer())
       .pipe(sourcemaps.init({loadMaps: true}))
+		.pipe(replace(/(templateUrl: '.)(.*)(.component.html)/g, (match) => {
+						let componentName = match.substring(15, match.length-15);
+						let newString = `templateUrl: './app/${componentName}.component.html`
+						return newString;
+					}))
         .pipe(babel({presets: ["@babel/preset-env"]}))
 				.pipe(uglify())
 				.pipe(rename("app.bundle.js"))

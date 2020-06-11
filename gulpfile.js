@@ -180,7 +180,7 @@ function browserTests()
 gulp.task("serve", function() {
 	browserSync.init({
 		server: {
-			baseDir: "./dist"
+			baseDir: "./localdev"
 		},
 		single: true
 	});

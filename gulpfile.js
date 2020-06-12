@@ -138,17 +138,13 @@ gulp.task("testBrowserify", function() {
 })
 
 //prepare for distribution
-function dist()
-{
-	return gulp
-		.parallel(
-			copyHtml,
-			copyIndex,
-			copyImgs,
-			styles,
-			scriptsDist
-		);
-}
+gulp.task('dist', gulp.parallel(
+	copyHtml,
+	copyIndex,
+	copyImgs,
+	styles,
+	scriptsDist
+));
 
 //watch files for changes and then run the appropriate tasks
 function watch()
@@ -169,5 +165,4 @@ exports.scripts = scripts;
 exports.scriptsDist = scriptsDist;
 exports.jasmineBrowserTest = jasmineBrowserTest;
 exports.browserTests = browserTests;
-exports.dist = dist;
 exports.watch = watch;

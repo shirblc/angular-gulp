@@ -5,7 +5,6 @@ import { AppComponent } from './app.component'
 import { AppRoutingModule } from './app-routing.module'
 import { ErrorPage } from './components/errorPage/errorPage.component';
 import { Sample } from './components/sample/sample.component';
-import { SampleService } from './services/sample.service';
 
 
 @NgModule({
@@ -18,9 +17,7 @@ import { SampleService } from './services/sample.service';
     ErrorPage,
     Sample
   ],
-  providers: [
-    SampleService
-  ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule {

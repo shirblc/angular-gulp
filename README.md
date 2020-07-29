@@ -59,7 +59,6 @@ The site uses several tools to maximise compatibility:
 6. **Gulp-Sourcemaps** - A Gulp plugin utilizing the source maps tool. For more info check the [Gulp-sourcemaps](https://www.npmjs.com/package/gulp-sourcemaps) page on NPM.
 7. **Gulp-Rename** - A gulp plugin used to rename files. Used to rename the main module JS and to change the directory name of all HTML files. For more info check the [Gulp-rename](https://www.npmjs.com/package/gulp-rename) page on NPM.
 8. **Gulp-replace** - A string replace plugin for Gulp. Used to change the templateUrls in the final JS file. For more info, check the [Gulp-replace](https://www.npmjs.com/package/gulp-replace) page on NPM.
-9. **Gulp-Jasmine-Browser** - A headless browser extension for the unit-testing tool Jasmine. The site also includes **Jasmine-core** and **Puppeteer** in order to execute Jasmine tests from the command line. For more info check the [Gulp-jasmine-browser](https://www.npmjs.com/package/gulp-jasmine-browser) page on NPM or the [Jasmine documentation](https://jasmine.github.io/) page.
 
 ### Angular
 
@@ -79,11 +78,44 @@ The site uses several tools to maximise compatibility:
 
 For more information about Angular's required NPM packages, check the [Angular docs](https://angular.io/guide/npm-packages).
 
+### Testing Dependencies
+
+This project's tests are run using the Jasmine framework and the Karma runner. Thus, testing requires several packages:
+
+1. **Jasmine** - An open-source behaviour-driven testing framework. For more information, check Jasmine's [official site](https://jasmine.github.io). Included packages:
+  - **jasmine-core**
+  - **jasmine-spec-reporter**
+  - **@types/jasmine** - A typed version, required in order to write TypeScript tests.
+2. **Karma** - An open-source test-runner, used to run the tests on various devices with a test server. For more information, check Karma's [official site](https://karma-runner.github.io/latest/index.html). Included packages:
+  - **karma**
+  - **karma-jasmine** - A Karma adapter for the Jasmine framework. [Project repo.](https://github.com/karma-runner/karma-jasmine)
+  - **karma-jasmine-html-reporter** - A reporter that shows test results in HTML. [NPM page.](https://www.npmjs.com/package/karma-jasmine-html-reporter).
+  - **karma-chrome-launcher** - A launcher for Chrome, Chrome Canary and Chromuim. [Project repo.](https://github.com/karma-runner/karma-chrome-launcher).
+  - **karma-coverage** - Code coverage generator. [Project repo.](https://github.com/karma-runner/karma-coverage)
+  - **karma-coverage-istanbul-reporter** - Code coverage generator reporter. [NPM page.](https://www.npmjs.com/package/karma-coverage-istanbul-reporter)
+  - **karma-sourcemap-loader** - A preprocessor that loads existing source maps. [NPM page.](https://www.npmjs.com/package/karma-sourcemap-loader)
+  - **karma-webpack** - A Karma adapter for processing files through Webpack. [Project repo.](https://github.com/webpack-contrib/karma-webpack)
+3. **Webpack** - An open-source module bundler, used to bundle the project's TypeScript and HTML files. For more information, check Webpack's [official website](https://webpack.js.org).
+  - **html-loader** - A webpack loader for HTML files.
+  - **ts-loader** - A webpack loader for TypeScript files.
+  - **angular-router-loader** - A webpack loader for Angular that enables the Angular router. [NPM page.](https://www.npmjs.com/package/angular-router-loader)
+  - **@ngtools/webpack** - A webpack plugin for ahead-of-time compilation of Angular components and modules. [NPM page.](https://www.npmjs.com/package/@ngtools/webpack)
+
 ### Production Dependencies
 
 1. **Express** - This project uses Express in order to run a basic server in deployment. This server is used to send the static files and script to the user. For more information, check the [Express website](https://expressjs.com).
 2. **Compression** - A Node extension used to compress production files when sending them from the Express server to the client. For more information, check the [compression NPM page](https://www.npmjs.com/package/compression).
 2. **dotenv** - A Node extension for accessing environment variables. Used by the frontend while in production mode. For more information, check the [dotenv NPM page](https://www.npmjs.com/package/dotenv).
+
+## Testing
+
+### Writing Tests
+
+Tests are written in TypeScript and each component's tests are located in the same directory as the component. Test files' names follow this format: `<component_name>.spec.ts`. This format is the way tests are picked up by the main testing file, and so it's important to keep to it.
+
+### Running Tests
+
+Running tests is done through the dedicated Gulp task. All you need to do is run `gulp unitTest` in the terminal; this will start Karma and trigger Webpack's compilation of tests and project files. Note: this process can take several minutes.
 
 ## Hosting
 

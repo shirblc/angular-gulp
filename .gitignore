@@ -4,4 +4,11 @@
 _notes/
 /bower_components/
 node_modules/
-__pycache__
+coverage
+
+# local development files
+localdev/app
+localdev/css
+localdev/app.bundle.js
+localdev/app.bundle.js.map
+localdev/index.html

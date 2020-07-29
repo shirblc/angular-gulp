@@ -97,7 +97,6 @@ This project's tests are run using the Jasmine framework and the Karma runner. T
   - **karma-webpack** - A Karma adapter for processing files through Webpack. [Project repo.](https://github.com/webpack-contrib/karma-webpack)
 3. **Webpack** - An open-source module bundler, used to bundle the project's TypeScript and HTML files. For more information, check Webpack's [official website](https://webpack.js.org).
   - **html-loader** - A webpack loader for HTML files.
-  - **ts-loader** - A webpack loader for TypeScript files.
   - **angular-router-loader** - A webpack loader for Angular that enables the Angular router. [NPM page.](https://www.npmjs.com/package/angular-router-loader)
   - **@ngtools/webpack** - A webpack plugin for ahead-of-time compilation of Angular components and modules. [NPM page.](https://www.npmjs.com/package/@ngtools/webpack)
 

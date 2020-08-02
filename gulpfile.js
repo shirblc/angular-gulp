@@ -161,8 +161,7 @@ gulp.task('dist', gulp.parallel(
 function unitTest()
 {
 	return new Server({
-	    configFile: __dirname + '/karma.conf.js',
-	    singleRun: true
+	    configFile: __dirname + '/karma.conf.js'
 	  }).start();
 }
 

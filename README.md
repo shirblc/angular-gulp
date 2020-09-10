@@ -1,5 +1,9 @@
 # Angular-Gulp
 
+[![Known Vulnerabilities](https://snyk.io/test/github/shirblc/angular-gulp/badge.svg)](https://snyk.io/test/github/shirblc/angular-gulp)
+[![dependencies Status](https://david-dm.org/shirblc/angular-gulp/status.svg)](https://david-dm.org/shirblc/angular-gulp)
+[![devDependencies Status](https://david-dm.org/shirblc/angular-gulp/dev-status.svg)](https://david-dm.org/shirblc/angular-gulp?type=dev)
+
 ## Version
 
 Version 1 (currently in development).

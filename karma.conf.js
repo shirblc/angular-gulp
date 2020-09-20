@@ -1,75 +1,28 @@
 const path = require('path');
-const ngTools = require('@ngtools/webpack');
 
 // Karma configuration file
 module.exports = function (karma) {
   karma.set({
     basePath: '',
-    frameworks: ['jasmine'],
-    plugins: [
-      require('karma-jasmine'),
-      require('karma-chrome-launcher'),
-      require('karma-jasmine-html-reporter'),
-      require('karma-coverage-istanbul-reporter'),
-      require('karma-webpack'),
-      require('karma-coverage'),
-      require('karma-sourcemap-loader')
-    ],
+    frameworks: ['jasmine', 'browserify'],
     mime: { 'text/x-typescript': ['ts','tsx'] },
     files: [
-        { pattern: "./src/base.spec.ts", included: false },
-        { pattern: "./src/**/*.+(ts|html)" }
+        { pattern: "./src/**/*.spec.ts" },
+        { pattern: "./tests/app.bundle.js" }
     ],
     preprocessors: {
-        './src/base.spec.ts': ['webpack'],
-        './src/**/*.ts': ['webpack', 'sourcemap', 'coverage']
+        "./tests/src/**/*.spec.ts" : ['browserify'],
+        './tests/app.bundle.js': ['sourcemap']
     },
-    webpack: {
-        devtool: "source-map",
-        entry: {
-          app: './src/main.ts',
-          test: './src/base.spec.ts'
-        },
-        mode: "development",
-        node: { fs: 'empty' },
-        module: {
-            rules: [
-                {
-                    test: /\.html$/,
-                    loader: 'html-loader'
-                },
-                {
-                  test: /(?:\.ngfactory\.js|\.ngstyle\.js|\.ts)$/,
-                  loader: [
-                    '@ngtools/webpack',
-                    { loader: 'angular-router-loader' }
-                  ]
-                }
-            ]
-        },
-        resolve: {
-            extensions: [".ts", ".js"]
-        },
-        plugins: [
-          new ngTools.AngularCompilerPlugin({
-            tsConfigPath: 'tsconfig.json',
-            basePath: './',
-            entryModule: path.resolve(__dirname, 'src/app/app.module#AppModule'),
-            skipCodeGeneration: true,
-            sourceMap: true,
-            directTemplateLoading: false,
-            locale: 'en',
-            hostReplacementPaths: {
-              'src/environments/config.development.ts': 'src/environments/config.production.ts'
-            }
-          })
-        ]
-    },
-    webpackMiddleware: {
-        quiet: true,
-        stats: {
-            colors: true
-        }
+    browserify: {
+      debug: true,
+      plugin: ['tsify'],
+      extensions: ['ts', 'tsx'],
+      configure: function(bundle) {
+        bundle.on('prebundle', function() {
+          bundle.transform('tsify', { target: 'es6' });
+        });
+      }
     },
     coverageIstanbulReporter: {
       dir: path.resolve(__dirname, './coverage/angular-gulp'),
@@ -79,7 +32,7 @@ module.exports = function (karma) {
     client: {
       clearContext: false // leave Jasmine Spec Runner output visible in browser
     },
-    reporters: ['progress', 'kjhtml', 'coverage'],
+    reporters: ['progress', 'kjhtml'],
     port: 9876,
     logLevel: 'DEBUG',
     autoWatch: false,

@@ -12,3 +12,4 @@ localdev/css
 localdev/app.bundle.js
 localdev/app.bundle.js.map
 localdev/index.html
+tests/*

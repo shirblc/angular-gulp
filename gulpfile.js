@@ -229,6 +229,7 @@ function unitTest()
 }
 
 gulp.task('test', gulp.series(
+	bundleCode,
 	addTemplates,
 	unitTest
 ))

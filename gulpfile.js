@@ -11,6 +11,7 @@ const source = require("vinyl-source-stream");
 const buffer = require("vinyl-buffer");
 const rename = require("gulp-rename");
 const replace = require("gulp-replace");
+const fs = require("fs");
 var Server = require('karma').Server;
 
 // LOCAL DEVELOPMENT TASKS
@@ -157,6 +158,68 @@ gulp.task('dist', gulp.parallel(
 
 // TESTING TASKS
 // ===============================================
+// bundle up the files before the tests as there's an apparent memory leak
+// in karma-webpack
+function bundleCode() {
+	var b = browserify().add("src/main.ts").plugin(tsify, {target: "es6"});
+
+	return b.bundle()
+			.pipe(source("src/main.ts"))
+			.pipe(buffer())
+      .pipe(sourcemaps.init({loadMaps: true}))
+			.pipe(replace(/(templateUrl: '.)(.*)(.component.html')/g, (match) => {
+							let componentName = match.substring(16, match.length-16);
+							let componentTemplate;
+
+							if(componentName == 'app') {
+								componentTemplate = fs.readFileSync(__dirname + `/src/app/${componentName}.component.html`);
+							}
+							else {
+								componentTemplate = fs.readFileSync(__dirname + `/src/app/components/${componentName}/${componentName}.component.html`);
+							}
+
+							let newString = `template: \`${componentTemplate}\``
+							return newString;
+						}))
+			.pipe(babel({presets: ["@babel/preset-env"]}))
+			.pipe(rename("app.bundle.js"))
+			.pipe(sourcemaps.write())
+			.pipe(gulp.dest("./tests"));
+}
+
+// bundle tests - for testing
+function bundleTests() {
+	var b = browserify().add("tests/src/base.spec.ts").plugin(tsify, {target: "es6"});
+
+	return b.bundle()
+			.pipe(source("tests/src/base.spec.ts"))
+			.pipe(buffer())
+      .pipe(sourcemaps.init({loadMaps: true}))
+			.pipe(rename("tests.bundle.js"))
+			.pipe(sourcemaps.write())
+			.pipe(gulp.dest("./tests"));
+}
+
+// add inline templates for testing
+function addTemplates() {
+	return gulp.src('src/**/*.ts', {base: "./"})
+	.pipe(replace(/(templateUrl: '.)(.*)(.component.html')/g, (match) => {
+					let componentName = match.substring(16, match.length-16);
+					let componentTemplate;
+
+					if(componentName == 'app') {
+						componentTemplate = fs.readFileSync(__dirname + `/src/app/${componentName}.component.html`);
+					}
+					else {
+						componentTemplate = fs.readFileSync(__dirname + `/src/app/components/${componentName}/${componentName}.component.html`);
+					}
+
+					let newString = `template: \`${componentTemplate}\``
+					return newString;
+				}))
+	.pipe(gulp.dest('./tests'))
+}
+
 // automatic testing in whatever browser is defined in the Karma config file
 function unitTest()
 {
@@ -164,6 +227,11 @@ function unitTest()
 	    configFile: __dirname + '/karma.conf.js'
 	  }).start();
 }
+
+gulp.task('test', gulp.series(
+	addTemplates,
+	unitTest
+))
 
 //boot up the server
 gulp.task("serve", function() {
@@ -184,3 +252,4 @@ exports.scripts = scripts;
 exports.scriptsDist = scriptsDist;
 exports.unitTest = unitTest;
 exports.watch = watch;
+exports.bundleTests = bundleTests;

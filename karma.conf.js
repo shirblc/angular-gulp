@@ -26,13 +26,12 @@ module.exports = function (karma) {
     },
     coverageIstanbulReporter: {
       dir: path.resolve(__dirname, './coverage/angular-gulp'),
-      reports: ['html', 'lcovonly', 'text-summary'],
-      fixWebpackSourcePaths: true
+      reports: ['html', 'lcovonly', 'text-summary']
     },
     client: {
       clearContext: false // leave Jasmine Spec Runner output visible in browser
     },
-    reporters: ['progress', 'kjhtml'],
+    reporters: ['progress', 'kjhtml', 'coverage', 'coverage-istanbul'],
     port: 9876,
     logLevel: 'DEBUG',
     autoWatch: false,

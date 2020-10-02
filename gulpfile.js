@@ -11,6 +11,9 @@ const source = require("vinyl-source-stream");
 const buffer = require("vinyl-buffer");
 const rename = require("gulp-rename");
 const replace = require("gulp-replace");
+const path = require('path');
+const fs = require("fs");
+var through = require('through');
 var Server = require('karma').Server;
 
 // LOCAL DEVELOPMENT TASKS
@@ -157,6 +160,91 @@ gulp.task('dist', gulp.parallel(
 
 // TESTING TASKS
 // ===============================================
+// import all the tests to main file
+// credit for this goes to @hackerhat
+// https://github.com/facebook/create-react-app/issues/517#issuecomment-417943099
+function setupTests() {
+	return gulp.src('src/tests.ts')
+	.pipe(replace(/\/\/ test-placeholder/, (match) => {
+		let newString = '';
+
+		function readDirectory(directory) {
+	    fs.readdirSync(directory).forEach((file) => {
+	      const fullPath = path.resolve(directory, file);
+				const regularExpression = /\.spec\.ts$/;
+
+	      if (fs.statSync(fullPath).isDirectory()) {
+	        readDirectory(fullPath);
+	      }
+
+	      if (!regularExpression.test(fullPath)) return;
+
+				let hugIndex = fullPath.indexOf('app');
+				let newPath = './' + fullPath.substring(hugIndex);
+	      newString += `import "${newPath}";
+				`;
+	    });
+	  }
+
+		readDirectory(path.resolve(__dirname, 'src'));
+
+			return newString;
+		}))
+	.pipe(rename("tests.specs.ts"))
+	.pipe(gulp.dest('src/'))
+}
+
+// bundle up the code before the tests
+function bundleCode() {
+	var b = browserify({
+		debug: true
+	}).add("src/main.ts").transform(function(file) {
+		var data = '';
+    return through(write, end);
+
+    function write (buf) {
+			let codeChunk = buf.toString("utf8");
+			// inline the templates
+			let replacedChunk = codeChunk.replace(/(templateUrl: '.)(.*)(.component.html')/g, (match) => {
+				let componentName = match.substring(16, match.length-16);
+				let componentTemplate;
+
+				if(componentName == 'app') {
+					componentTemplate = fs.readFileSync(__dirname + `/src/app/${componentName}.component.html`);
+				}
+				else {
+					componentTemplate = fs.readFileSync(__dirname + `/src/app/components/${componentName}/${componentName}.component.html`);
+				}
+
+				let newString = `/* istanbul ignore next */
+				template: \`${componentTemplate}\``
+				return newString;
+			});
+
+			data += replacedChunk
+		}
+
+    function end () {
+        this.queue(data);
+        this.queue(null);
+    }
+	}).plugin(tsify, { target: 'es6' }).transform(require('browserify-istanbul')({
+		instrumenterConfig: {
+                  embedSource: true
+                },
+		ignore: ['**/node_modules/**', '**/*.mock.ts', '**/*.spec.ts'],
+		defaultIgnore: false
+	}));
+
+	return b.bundle()
+			.pipe(source("src/main.ts"))
+			.pipe(buffer())
+      .pipe(sourcemaps.init({loadMaps: true}))
+			.pipe(rename("app.bundle.js"))
+			.pipe(sourcemaps.write())
+			.pipe(gulp.dest("./tests"));
+}
+
 // automatic testing in whatever browser is defined in the Karma config file
 function unitTest()
 {
@@ -164,6 +252,12 @@ function unitTest()
 	    configFile: __dirname + '/karma.conf.js'
 	  }).start();
 }
+
+gulp.task('test', gulp.series(
+	setupTests,
+	bundleCode,
+	unitTest
+))
 
 //boot up the server
 gulp.task("serve", function() {

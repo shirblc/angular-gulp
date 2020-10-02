@@ -7,11 +7,11 @@ module.exports = function (karma) {
     frameworks: ['jasmine', 'browserify'],
     mime: { 'text/x-typescript': ['ts','tsx'] },
     files: [
-        { pattern: "./src/**/*.spec.ts" },
+        { pattern: "./src/tests.specs.ts" },
         { pattern: "./tests/app.bundle.js" }
     ],
     preprocessors: {
-        "./tests/src/**/*.spec.ts" : ['browserify'],
+        "./src/tests.specs.ts" : ['browserify'],
         './tests/app.bundle.js': ['sourcemap']
     },
     browserify: {

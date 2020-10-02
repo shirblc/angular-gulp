@@ -158,6 +158,40 @@ gulp.task('dist', gulp.parallel(
 
 // TESTING TASKS
 // ===============================================
+// import all the tests to main file
+// credit for this goes to @hackerhat
+// https://github.com/facebook/create-react-app/issues/517#issuecomment-417943099
+function setupTests() {
+	return gulp.src('src/tests.ts')
+	.pipe(replace(/\/\/ test-placeholder/, (match) => {
+		let newString = '';
+
+		function readDirectory(directory) {
+	    fs.readdirSync(directory).forEach((file) => {
+	      const fullPath = path.resolve(directory, file);
+				const regularExpression = /\.spec\.ts$/;
+
+	      if (fs.statSync(fullPath).isDirectory()) {
+	        readDirectory(fullPath);
+	      }
+
+	      if (!regularExpression.test(fullPath)) return;
+
+				let hugIndex = fullPath.indexOf('app');
+				let newPath = './' + fullPath.substring(hugIndex);
+	      newString += `import "${newPath}";
+				`;
+	    });
+	  }
+
+		readDirectory(path.resolve(__dirname, 'src'));
+
+			return newString;
+		}))
+	.pipe(rename("tests.specs.ts"))
+	.pipe(gulp.dest('src/'))
+}
+
 // bundle up the files before the tests as there's an apparent memory leak
 // in karma-webpack
 function bundleCode() {
@@ -229,6 +263,7 @@ function unitTest()
 }
 
 gulp.task('test', gulp.series(
+	setupTests,
 	bundleCode,
 	addTemplates,
 	unitTest

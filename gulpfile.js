@@ -192,30 +192,52 @@ function setupTests() {
 	.pipe(gulp.dest('src/'))
 }
 
-// bundle up the files before the tests as there's an apparent memory leak
-// in karma-webpack
+// bundle up the code before the tests
 function bundleCode() {
-	var b = browserify().add("src/main.ts").plugin(tsify, {target: "es6"});
+	var b = browserify({
+		debug: true
+	}).add("src/main.ts").transform(function(file) {
+		var data = '';
+    return through(write, end);
+
+    function write (buf) {
+			let codeChunk = buf.toString("utf8");
+			// inline the templates
+			let replacedChunk = codeChunk.replace(/(templateUrl: '.)(.*)(.component.html')/g, (match) => {
+				let componentName = match.substring(16, match.length-16);
+				let componentTemplate;
+
+				if(componentName == 'app') {
+					componentTemplate = fs.readFileSync(__dirname + `/src/app/${componentName}.component.html`);
+				}
+				else {
+					componentTemplate = fs.readFileSync(__dirname + `/src/app/components/${componentName}/${componentName}.component.html`);
+				}
+
+				let newString = `/* istanbul ignore next */
+				template: \`${componentTemplate}\``
+				return newString;
+			});
+
+			data += replacedChunk
+		}
+
+    function end () {
+        this.queue(data);
+        this.queue(null);
+    }
+	}).plugin(tsify, { target: 'es6' }).transform(require('browserify-istanbul')({
+		instrumenterConfig: {
+                  embedSource: true
+                },
+		ignore: ['**/node_modules/**', '**/*.mock.ts', '**/*.spec.ts'],
+		defaultIgnore: false
+	}));
 
 	return b.bundle()
 			.pipe(source("src/main.ts"))
 			.pipe(buffer())
       .pipe(sourcemaps.init({loadMaps: true}))
-			.pipe(replace(/(templateUrl: '.)(.*)(.component.html')/g, (match) => {
-							let componentName = match.substring(16, match.length-16);
-							let componentTemplate;
-
-							if(componentName == 'app') {
-								componentTemplate = fs.readFileSync(__dirname + `/src/app/${componentName}.component.html`);
-							}
-							else {
-								componentTemplate = fs.readFileSync(__dirname + `/src/app/components/${componentName}/${componentName}.component.html`);
-							}
-
-							let newString = `template: \`${componentTemplate}\``
-							return newString;
-						}))
-			.pipe(babel({presets: ["@babel/preset-env"]}))
 			.pipe(rename("app.bundle.js"))
 			.pipe(sourcemaps.write())
 			.pipe(gulp.dest("./tests"));

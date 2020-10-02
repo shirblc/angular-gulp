@@ -11,7 +11,9 @@ const source = require("vinyl-source-stream");
 const buffer = require("vinyl-buffer");
 const rename = require("gulp-rename");
 const replace = require("gulp-replace");
+const path = require('path');
 const fs = require("fs");
+var through = require('through');
 var Server = require('karma').Server;
 
 // LOCAL DEVELOPMENT TASKS
@@ -276,4 +278,3 @@ exports.scripts = scripts;
 exports.scriptsDist = scriptsDist;
 exports.unitTest = unitTest;
 exports.watch = watch;
-exports.bundleTests = bundleTests;

@@ -1,4 +1,6 @@
 const path = require('path');
+const fs = require("fs");
+var through = require('through');
 
 // Karma configuration file
 module.exports = function (karma) {

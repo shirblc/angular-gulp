@@ -19,9 +19,7 @@ module.exports = function (karma) {
       plugin: ['tsify'],
       extensions: ['ts', 'tsx'],
       configure: function(bundle) {
-        bundle.on('prebundle', function() {
-          bundle.transform('tsify', { target: 'es6' });
-        });
+        bundle.transform('tsify', { target: 'es6' });
       }
     },
     coverageIstanbulReporter: {

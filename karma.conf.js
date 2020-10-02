@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require("fs");
 var through = require('through');
+process.env.CHROME_BIN = '/usr/bin/google-chrome-stable';
 
 // Karma configuration file
 module.exports = function (karma) {
@@ -72,7 +73,19 @@ module.exports = function (karma) {
     port: 9876,
     logLevel: 'DEBUG',
     autoWatch: false,
-    browsers: ['Chrome'],
+    browsers: ['ChromeNoSandbox'],
+    customLaunchers: {
+      ChromeNoSandbox: {
+        base: 'ChromeHeadless',
+        flags: [
+            '--disable-gpu',
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-extensions',
+            '--disable-dev-shm-usage'
+        ]
+      }
+    },
     singleRun: true
   });
 };

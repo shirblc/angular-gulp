@@ -16,11 +16,48 @@ module.exports = function (karma) {
     },
     browserify: {
       debug: true,
-      plugin: ['tsify'],
-      extensions: ['ts', 'tsx'],
-      configure: function(bundle) {
-        bundle.transform('tsify', { target: 'es6' });
-      }
+      transform: [
+      // Inline the templates and its SVGs
+        function(file) {
+          var data = '';
+          return through(write, end);
+
+          // write the stream, replacing templateUrls and SVGs
+          function write (buf) {
+            let codeChunk = buf.toString("utf8");
+
+            // inline the templates
+            let replacedChunk = codeChunk.replace(/(templateUrl: '.)(.*)(.component.html')/g, (match) => {
+              let componentName = match.substring(16, match.length-16);
+              let componentTemplate;
+
+              if(componentName == 'app') {
+                componentTemplate = fs.readFileSync(__dirname + `/src/app/${componentName}.component.html`);
+              }
+              else {
+                componentTemplate = fs.readFileSync(__dirname + `/src/app/components/${componentName}/${componentName}.component.html`);
+              }
+
+              let newString = `template: \`${componentTemplate}\``
+              return newString;
+            });
+
+            data += replacedChunk
+          }
+
+          // finish the stream
+          function end () {
+              this.queue(data);
+              this.queue(null);
+            }
+        },
+        // run browserify-istanbul
+        require('browserify-istanbul')({
+          ignore: ['**/node_modules/**', '**/*.mock.ts', '**/*.spec.ts', '**/*.interface.ts'],
+          defaultIgnore: false
+        })],
+      plugin: [['tsify', { target: 'es6' }]],
+      extensions: ['ts', 'tsx']
     },
     coverageIstanbulReporter: {
       dir: path.resolve(__dirname, './coverage/angular-gulp'),

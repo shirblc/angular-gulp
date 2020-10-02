@@ -45,6 +45,7 @@
     "karma-jasmine-html-reporter": "^1.5.4",
     "karma-sourcemap-loader": "^0.3.8",
     "puppeteer": "^5.2.1",
+    "through": "^2.3.8",
     "tsify": "^5.0.2",
     "typescript": "^4.0.2",
     "vinyl-buffer": "^1.0.1",

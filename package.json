@@ -62,7 +62,7 @@
     "@angular/forms": "^11.1.2",
     "@angular/platform-browser": "^11.1.2",
     "@angular/platform-browser-dynamic": "^11.1.2",
-    "@angular/router": "^11.1.2",
+    "@angular/router": "^11.2.2",
     "compression": "^1.7.4",
     "core-js": "^3.9.0",
     "dotenv": "^8.2.0",

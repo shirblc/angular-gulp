@@ -65,7 +65,7 @@
     "@angular/router": "^11.2.13",
     "compression": "^1.7.4",
     "core-js": "^3.12.1",
-    "dotenv": "^9.0.1",
+    "dotenv": "^9.0.2",
     "express": "^4.17.1",
     "rxjs": "^6.6.7",
     "ts-node": "^9.1.1",

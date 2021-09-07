@@ -11,10 +11,6 @@
     "config": "node env-config.js",
     "start": "node server.js"
   },
-  "engines": {
-    "node": "14.15.2",
-    "npm": "6.14.10"
-  },
   "author": "Shir Bar Lev",
   "license": "ISC",
   "devDependencies": {
@@ -54,15 +50,15 @@
     "watchify": "^4.0.0"
   },
   "dependencies": {
-    "@angular/animations": "^12.2.3",
-    "@angular/common": "^12.2.3",
-    "@angular/compiler": "^12.2.3",
-    "@angular/compiler-cli": "^12.2.3",
-    "@angular/core": "^12.2.3",
-    "@angular/forms": "^12.2.3",
-    "@angular/platform-browser": "^12.2.3",
-    "@angular/platform-browser-dynamic": "^12.2.3",
-    "@angular/router": "^12.2.3",
+    "@angular/animations": "^12.2.4",
+    "@angular/common": "^12.2.4",
+    "@angular/compiler": "^12.2.4",
+    "@angular/compiler-cli": "^12.2.4",
+    "@angular/core": "^12.2.4",
+    "@angular/forms": "^12.2.4",
+    "@angular/platform-browser": "^12.2.4",
+    "@angular/platform-browser-dynamic": "^12.2.4",
+    "@angular/router": "^12.2.4",
     "compression": "^1.7.4",
     "core-js": "^3.17.2",
     "dotenv": "^10.0.0",

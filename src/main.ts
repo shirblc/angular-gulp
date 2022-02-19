@@ -23,7 +23,6 @@ SOFTWARE.
 */
 
 import 'zone.js/dist/zone';
-import 'core-js/features/reflect';
 
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';

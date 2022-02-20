@@ -1,7 +1,7 @@
 const gulp = require("gulp");
 const postcss = require("gulp-postcss");
 const autoprefixer = require("autoprefixer");
-const uglify = require("gulp-uglify");
+const terser = require("gulp-terser");
 const babel = require("gulp-babel");
 const sourcemaps = require("gulp-sourcemaps");
 const browserSync = require("browser-sync").create();
@@ -173,23 +173,54 @@ function stylesDist()
 //deals with transforming and bundling the scripts while in production mode
 function scriptsDist()
 {
-	var b = browserify({
-		debug: true
-	}).add("src/main.ts").plugin(tsify, {target: "es6"});
+	const options = {
+		input: 'src/main.ts',
+		output: { sourcemap: true },
+		plugins: [
+			typescript(),
+			nodeResolve({
+				extensions: ['.js', '.ts']
+			}),
+			commonjs({
+				extensions: ['.js', '.ts'],
+				transformMixedEsModules: true
+			})
+    	]
+   	};
 
-	return b.bundle()
+	return rollupStream(options)
       .pipe(source("src/main.ts"))
       .pipe(buffer())
-      .pipe(sourcemaps.init({loadMaps: true}))
-		.pipe(replace(/(templateUrl: '.)(.*)(.component.html)/g, (match) => {
+			.pipe(replace(/(templateUrl: '.)(.*)(.component.html)/g, (match) => {
 						let componentName = match.substring(15, match.length-15);
 						let newString = `templateUrl: './app/${componentName}.component.html`
 						return newString;
 					}))
-        .pipe(babel({presets: ["@babel/preset-env"]}))
-				.pipe(uglify())
-				.pipe(rename("app.bundle.js"))
-      .pipe(sourcemaps.write("./"))
+			.pipe(terser())
+			.pipe(rename("app.bundle.min.js"))
+      .pipe(gulp.dest("./dist"));
+}
+
+//deals with transforming the scripts while in development mode
+function scriptsVendorsDist()
+{
+	const options = {
+		input: 'src/vendor.js',
+		output: { sourcemap: true },
+		plugins: [
+			nodeResolve({extensions: ['.js', '.ts']}),
+			commonjs({
+				extensions: ['.js', '.ts'],
+				transformMixedEsModules: true
+			})
+    	]
+   	};
+
+	return rollupStream(options)
+      .pipe(source("src/vendor.js"))
+      .pipe(buffer())
+			.pipe(terser())
+			.pipe(rename("vendor.bundle.js"))
       .pipe(gulp.dest("./dist"));
 }
 
@@ -199,7 +230,8 @@ gulp.task('dist', gulp.parallel(
 	copyIndexDist,
 	copyImgsDist,
 	stylesDist,
-	scriptsDist
+	scriptsDist,
+	scriptsVendorsDist
 ));
 
 // TESTING TASKS

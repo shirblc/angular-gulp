@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2020 Shir Bar Lev
+Copyright (c) 2022 Shir Bar Lev
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,16 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import 'core-js/features/reflect';
-
-import { enableProdMode } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-
-import { AppModule } from './app/app.module';
-import { environment } from './environments/environment';
-
-if (environment.production) {
-  enableProdMode();
-}
-
-platformBrowserDynamic().bootstrapModule(AppModule);
+// This is required because for some reason rollup has trouble bundling
+// zone.js and core-js together
+import 'zone.js/dist/zone.js';

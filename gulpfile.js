@@ -93,6 +93,32 @@ function scripts()
       .pipe(gulp.dest("./localdev"));
 }
 
+//deals with transforming the scripts while in development mode
+function scriptsVendors()
+{
+	const options = {
+		input: 'src/vendor.js',
+		output: { sourcemap: true },
+		plugins: [
+			nodeResolve({
+				extensions: ['.js', '.ts']
+			}),
+			commonjs({
+				extensions: ['.js', '.ts'],
+				transformMixedEsModules: true
+			})
+    	]
+   	};
+
+	return rollupStream(options)
+      .pipe(source("src/vendor.js"))
+      .pipe(buffer())
+      .pipe(sourcemaps.init({loadMaps: true}))
+			.pipe(rename("vendor.bundle.js"))
+      .pipe(sourcemaps.write("./"))
+      .pipe(gulp.dest("./localdev"));
+}
+
 //watch files for changes and then run the appropriate tasks
 function watch()
 {
@@ -341,6 +367,7 @@ exports.copyIndex = copyIndex;
 exports.copyImgs = copyImgs;
 exports.styles = styles;
 exports.scripts = scripts;
+exports.scriptsVendors = scriptsVendors;
 exports.scriptsDist = scriptsDist;
 exports.unitTest = unitTest;
 exports.watch = watch;

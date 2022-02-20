@@ -23,6 +23,7 @@ SOFTWARE.
 */
 
 import { Component } from '@angular/core';
+import { SampleService } from '../../services/sample.service';
 
 @Component({
   selector: 'app-sample',
@@ -30,7 +31,7 @@ import { Component } from '@angular/core';
 })
 export class Sample {
 
-  constructor() {
-
+  constructor(private sampleService: SampleService) {
+    this.sampleService.logService();
   }
 }

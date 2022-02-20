@@ -29,6 +29,10 @@ import { Injectable } from '@angular/core';
 })
 export class SampleService {
   constructor() {
+
+  }
+
+  logService() {
     console.log("this is a sample service!");
   }
 }

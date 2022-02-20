@@ -2,8 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/shirblc/angular-gulp.svg?style=shield)](https://circleci.com/gh/shirblc/angular-gulp.svg)
 [![Known Vulnerabilities](https://snyk.io/test/github/shirblc/angular-gulp/badge.svg)](https://snyk.io/test/github/shirblc/angular-gulp)
-[![dependencies Status](https://david-dm.org/shirblc/angular-gulp/status.svg)](https://david-dm.org/shirblc/angular-gulp)
-[![devDependencies Status](https://david-dm.org/shirblc/angular-gulp/dev-status.svg)](https://david-dm.org/shirblc/angular-gulp?type=dev)
+![Libraries.io dependency status for GitHub repo](https://img.shields.io/librariesio/github/shirblc/angular-gulp)
 
 ## Version
 

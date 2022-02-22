@@ -4,7 +4,7 @@ const fs = require("fs");
 /*
   Function Name: replaceTemplateUrl()
   Function Description: Rollup plugin that replaces the Angular templateUrl
-                        in test files with the inlined template. 
+                        in test files with the inlined template.
                         Originally written as a Browserify transform:
                         https://github.com/shirblc/angular-gulp/pull/1
   Parameters: None.
@@ -21,13 +21,15 @@ exports.replaceTemplateUrl = function() {
       const magicString  = new MagicString(code);
       let tempString = magicString.toString();
 
-      const componentNames = tempString.match(/(templateUrl: '.)(.*)(.component.html')/g);
+      const componentNames = tempString.match(/(templateUrl:'.)(.*)(.component.html')/g);
 
       if(componentNames) {
         const start = tempString.indexOf(componentNames[0]);
         const end = start + componentNames[0].length;
 
-        const componentName = componentNames[0].substring(16, componentNames[0].length-16);
+        const componentName = componentNames[0].substring(15, componentNames[0].length-16);
+        if(componentName == 'my') return;
+
         let componentTemplate;
 
         if(componentName == 'app') {

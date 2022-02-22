@@ -270,54 +270,6 @@ function setupTests() {
 	.pipe(gulp.dest('src/'))
 }
 
-// bundle up the code before the tests
-function bundleCode() {
-	var b = browserify({
-		debug: true
-	}).add("src/main.ts").plugin(tsify, { target: 'es6' }).transform(function(file) {
-		var data = '';
-		return through(write);
-
-		// write the stream, replacing templateUrls
-		function write(buf) {
-			let codeChunk = buf.toString("utf8");
-
-			// inline the templates
-			let replacedChunk = codeChunk.replace(/(templateUrl: '.)(.*)(.component.html')/g, (match) => {
-				let componentName = match.substring(16, match.length-16);
-				let componentTemplate;
-
-				if(componentName == 'app') {
-					componentTemplate = fs.readFileSync(__dirname + `/src/app/${componentName}.component.html`);
-				}
-				else {
-					componentTemplate = fs.readFileSync(__dirname + `/src/app/components/${componentName}/${componentName}.component.html`);
-				}
-
-				let newString = `template: \`${componentTemplate}\``
-				return newString;
-			});
-
-			data += replacedChunk
-			this.queue(data);
-		}
-	}).transform(require('browserify-istanbul')({
-		instrumenterConfig: {
-                  embedSource: true
-                },
-		ignore: ['**/node_modules/**', '**/*.mock.ts', '**/*.spec.ts'],
-		defaultIgnore: false
-	}));
-
-	return b.bundle()
-			.pipe(source("src/main.ts"))
-			.pipe(buffer())
-      .pipe(sourcemaps.init({loadMaps: true}))
-			.pipe(rename("app.bundle.js"))
-			.pipe(sourcemaps.write())
-			.pipe(gulp.dest("./tests"));
-}
-
 // automatic testing in whatever browser is defined in the Karma config file
 function unitTest()
 {
@@ -328,23 +280,14 @@ function unitTest()
 
 gulp.task('test', gulp.series(
 	setupTests,
-	bundleCode,
 	unitTest
 ))
 
-// get the static assets to run the server
-function getAssets() {
-	return gulp
-		.src(["index.html", "src/css/styles.css"])
-		.pipe(rename({dirname:""}))
-		.pipe(replace("css/styles.css", "styles.css"))
-		.pipe(gulp.dest("tests"));
-}
 // run development server & protractor
 async function runProtractor() {
 	bs = browserSync.init({
 		server: {
-			baseDir: "./tests"
+			baseDir: "./localdev"
 		},
 		single: true
 	})
@@ -355,6 +298,7 @@ async function runProtractor() {
 			gecko: false,
 			quiet: true,
 	});
+
 	// run protractor
 	await execFile('./node_modules/protractor/bin/protractor', ['./e2e/protractor.conf.js'], (error, stdout, stderr) => {
 	    if (error) {
@@ -378,8 +322,12 @@ function stopDevServer() {
 
 // run e2e testing
 gulp.task('e2e', gulp.series(
-	getAssets,
-	bundleCode,
+	scripts,
+	scriptsVendors,
+	copyHtml,
+	copyIndex,
+	copyImgs,
+	styles,
 	runProtractor
 ))
 

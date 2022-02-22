@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2020 Shir Bar Lev
+Copyright (c) 2022 Shir Bar Lev
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,18 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import 'zone.js/dist/zone';
-import 'zone.js/dist/zone-testing';
-import { getTestBed } from '@angular/core/testing';
-import {
-  BrowserDynamicTestingModule,
-  platformBrowserDynamicTesting
-} from '@angular/platform-browser-dynamic/testing';
-import './app/app.module.ts';
-// test-placeholder
-
-// First, initialize the Angular testing environment.
-getTestBed().initTestEnvironment(
-  BrowserDynamicTestingModule,
-  platformBrowserDynamicTesting()
-);
+// This is required because for some reason rollup has trouble bundling
+// zone.js and core-js together
+import 'zone.js/dist/zone.js';

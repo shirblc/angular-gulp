@@ -1,23 +1,24 @@
 const gulp = require("gulp");
 const postcss = require("gulp-postcss");
 const autoprefixer = require("autoprefixer");
-const uglify = require("gulp-uglify");
+const terser = require("gulp-terser");
 const babel = require("gulp-babel");
 const sourcemaps = require("gulp-sourcemaps");
 const browserSync = require("browser-sync").create();
-const browserify = require("browserify");
-const tsify = require("tsify");
 const source = require("vinyl-source-stream");
 const buffer = require("vinyl-buffer");
 const rename = require("gulp-rename");
 const replace = require("gulp-replace");
 const path = require('path');
 const fs = require("fs");
-var through = require('through');
 const execFile = require('child_process').execFile;
 const webdriverUpdate = require('protractor/node_modules/webdriver-manager/built/lib/cmds/update');
 var Server = require('karma').Server;
 let bs;
+const rollupStream = require("@rollup/stream");
+const commonjs = require("@rollup/plugin-commonjs");
+const nodeResolve = require("@rollup/plugin-node-resolve").nodeResolve;
+const typescript = require("@rollup/plugin-typescript");
 
 // LOCAL DEVELOPMENT TASKS
 // ===============================================
@@ -59,21 +60,58 @@ function styles()
 //deals with transforming the scripts while in development mode
 function scripts()
 {
-	var b = browserify({
-		debug: true
-	}).add("src/main.ts").plugin(tsify, {target: "es6"});
+	const options = {
+		input: 'src/main.ts',
+		output: { sourcemap: true },
+		plugins: [
+			typescript(),
+			nodeResolve({
+				extensions: ['.js', '.ts']
+			}),
+			commonjs({
+				extensions: ['.js', '.ts'],
+				transformMixedEsModules: true
+			})
+    	]
+   	};
 
-	return b.bundle()
+	return rollupStream(options)
       .pipe(source("src/main.ts"))
       .pipe(buffer())
       .pipe(sourcemaps.init({loadMaps: true}))
-				.pipe(replace(/(templateUrl: '.)(.*)(.component.html)/g, (match) => {
-					let componentName = match.substring(15, match.length-15);
-					let newString = `templateUrl: './app/${componentName}.component.html`
-					return newString;
-				}))
-        .pipe(babel({presets: ["@babel/preset-env"]}))
-				.pipe(rename("app.bundle.js"))
+			.pipe(replace(/(templateUrl: '.)(.*)(.component.html)/g, (match) => {
+				let componentName = match.substring(15, match.length-15);
+				let newString = `templateUrl: './app/${componentName}.component.html`
+				return newString;
+			}))
+      // .pipe(babel({presets: ["@babel/preset-env"]}))
+			.pipe(rename("app.bundle.js"))
+      .pipe(sourcemaps.write("./"))
+      .pipe(gulp.dest("./localdev"));
+}
+
+//deals with transforming the scripts while in development mode
+function scriptsVendors()
+{
+	const options = {
+		input: 'src/vendor.js',
+		output: { sourcemap: true },
+		plugins: [
+			nodeResolve({
+				extensions: ['.js', '.ts']
+			}),
+			commonjs({
+				extensions: ['.js', '.ts'],
+				transformMixedEsModules: true
+			})
+    	]
+   	};
+
+	return rollupStream(options)
+      .pipe(source("src/vendor.js"))
+      .pipe(buffer())
+      .pipe(sourcemaps.init({loadMaps: true}))
+			.pipe(rename("vendor.bundle.js"))
       .pipe(sourcemaps.write("./"))
       .pipe(gulp.dest("./localdev"));
 }
@@ -132,23 +170,54 @@ function stylesDist()
 //deals with transforming and bundling the scripts while in production mode
 function scriptsDist()
 {
-	var b = browserify({
-		debug: true
-	}).add("src/main.ts").plugin(tsify, {target: "es6"});
+	const options = {
+		input: 'src/main.ts',
+		output: { sourcemap: true },
+		plugins: [
+			typescript(),
+			nodeResolve({
+				extensions: ['.js', '.ts']
+			}),
+			commonjs({
+				extensions: ['.js', '.ts'],
+				transformMixedEsModules: true
+			})
+    	]
+   	};
 
-	return b.bundle()
+	return rollupStream(options)
       .pipe(source("src/main.ts"))
       .pipe(buffer())
-      .pipe(sourcemaps.init({loadMaps: true}))
-		.pipe(replace(/(templateUrl: '.)(.*)(.component.html)/g, (match) => {
+			.pipe(replace(/(templateUrl: '.)(.*)(.component.html)/g, (match) => {
 						let componentName = match.substring(15, match.length-15);
 						let newString = `templateUrl: './app/${componentName}.component.html`
 						return newString;
 					}))
-        .pipe(babel({presets: ["@babel/preset-env"]}))
-				.pipe(uglify())
-				.pipe(rename("app.bundle.js"))
-      .pipe(sourcemaps.write("./"))
+			.pipe(terser())
+			.pipe(rename("app.bundle.min.js"))
+      .pipe(gulp.dest("./dist"));
+}
+
+//deals with transforming the scripts while in development mode
+function scriptsVendorsDist()
+{
+	const options = {
+		input: 'src/vendor.js',
+		output: { sourcemap: true },
+		plugins: [
+			nodeResolve({extensions: ['.js', '.ts']}),
+			commonjs({
+				extensions: ['.js', '.ts'],
+				transformMixedEsModules: true
+			})
+    	]
+   	};
+
+	return rollupStream(options)
+      .pipe(source("src/vendor.js"))
+      .pipe(buffer())
+			.pipe(terser())
+			.pipe(rename("vendor.bundle.js"))
       .pipe(gulp.dest("./dist"));
 }
 
@@ -158,7 +227,8 @@ gulp.task('dist', gulp.parallel(
 	copyIndexDist,
 	copyImgsDist,
 	stylesDist,
-	scriptsDist
+	scriptsDist,
+	scriptsVendorsDist
 ));
 
 // TESTING TASKS
@@ -197,54 +267,6 @@ function setupTests() {
 	.pipe(gulp.dest('src/'))
 }
 
-// bundle up the code before the tests
-function bundleCode() {
-	var b = browserify({
-		debug: true
-	}).add("src/main.ts").plugin(tsify, { target: 'es6' }).transform(function(file) {
-		var data = '';
-		return through(write);
-
-		// write the stream, replacing templateUrls
-		function write(buf) {
-			let codeChunk = buf.toString("utf8");
-
-			// inline the templates
-			let replacedChunk = codeChunk.replace(/(templateUrl: '.)(.*)(.component.html')/g, (match) => {
-				let componentName = match.substring(16, match.length-16);
-				let componentTemplate;
-
-				if(componentName == 'app') {
-					componentTemplate = fs.readFileSync(__dirname + `/src/app/${componentName}.component.html`);
-				}
-				else {
-					componentTemplate = fs.readFileSync(__dirname + `/src/app/components/${componentName}/${componentName}.component.html`);
-				}
-
-				let newString = `template: \`${componentTemplate}\``
-				return newString;
-			});
-
-			data += replacedChunk
-			this.queue(data);
-		}
-	}).transform(require('browserify-istanbul')({
-		instrumenterConfig: {
-                  embedSource: true
-                },
-		ignore: ['**/node_modules/**', '**/*.mock.ts', '**/*.spec.ts'],
-		defaultIgnore: false
-	}));
-
-	return b.bundle()
-			.pipe(source("src/main.ts"))
-			.pipe(buffer())
-      .pipe(sourcemaps.init({loadMaps: true}))
-			.pipe(rename("app.bundle.js"))
-			.pipe(sourcemaps.write())
-			.pipe(gulp.dest("./tests"));
-}
-
 // automatic testing in whatever browser is defined in the Karma config file
 function unitTest()
 {
@@ -255,23 +277,14 @@ function unitTest()
 
 gulp.task('test', gulp.series(
 	setupTests,
-	bundleCode,
 	unitTest
 ))
 
-// get the static assets to run the server
-function getAssets() {
-	return gulp
-		.src(["index.html", "src/css/styles.css"])
-		.pipe(rename({dirname:""}))
-		.pipe(replace("css/styles.css", "styles.css"))
-		.pipe(gulp.dest("tests"));
-}
 // run development server & protractor
 async function runProtractor() {
 	bs = browserSync.init({
 		server: {
-			baseDir: "./tests"
+			baseDir: "./localdev"
 		},
 		single: true
 	})
@@ -282,6 +295,7 @@ async function runProtractor() {
 			gecko: false,
 			quiet: true,
 	});
+
 	// run protractor
 	await execFile('./node_modules/protractor/bin/protractor', ['./e2e/protractor.conf.js'], (error, stdout, stderr) => {
 	    if (error) {
@@ -305,8 +319,12 @@ function stopDevServer() {
 
 // run e2e testing
 gulp.task('e2e', gulp.series(
-	getAssets,
-	bundleCode,
+	scripts,
+	scriptsVendors,
+	copyHtml,
+	copyIndex,
+	copyImgs,
+	styles,
 	runProtractor
 ))
 
@@ -326,6 +344,7 @@ exports.copyIndex = copyIndex;
 exports.copyImgs = copyImgs;
 exports.styles = styles;
 exports.scripts = scripts;
+exports.scriptsVendors = scriptsVendors;
 exports.scriptsDist = scriptsDist;
 exports.unitTest = unitTest;
 exports.watch = watch;

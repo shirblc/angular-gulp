@@ -57,8 +57,8 @@ The site uses several tools to maximise compatibility:
 
 1. **Gulp** - Gulp enables running tasks automatically. You can read more on the [Gulp website](https://gulpjs.com). Gulp is a Node.js tool, so it requires installing Node.
 2. **Gulp-Postcss** with **Autoprefixer** Plugin - A Gulp plugin which adds the necessary browser prefixes to the CSS file. For more info check the [Gulp-postcss](https://www.npmjs.com/package/gulp-postcss) page and the [Autoprefixer](https://www.npmjs.com/package/autoprefixer) page on NPM.
-3. **Browserify** (with vinyl-source-stream and vinyl-buffer) - A library for bundling modular code. Browserify bundles up the main module (AppModule) and converts it from TypeScript to ES6. For more info, check the [Browserify repo](https://github.com/browserify/browserify) and Gulp's [Browserify + Gulp recipe](https://github.com/gulpjs/gulp/blob/master/docs/recipes/browserify-uglify-sourcemap.md).
-4. **Gulp-Babel** - A Gulp plugin for the transpiler Babel. Converts Browserify's ES6 output to the highly supported ES5. For more info check the plugin's [GitHub](https://github.com/babel/gulp-babel) repository.
+3. **Rollup** (with @rollup/stream) - A module bundler for JS. Rollup bundles up the main module (AppModule) and converts it from TypeScript to ES6. For more info, check the [Rollup repo](https://github.com/rollup/rollup) and Gulp's [Rollup + Gulp recipe](https://github.com/gulpjs/gulp/blob/master/docs/recipes/rollup-with-rollup-stream.md).
+4. **Gulp-Babel** - A Gulp plugin for the transpiler Babel. Converts ES6 output to the highly supported ES5 (currently isn't used). For more info check the plugin's [GitHub](https://github.com/babel/gulp-babel) repository.
 5. **Gulp-Uglify** - A Gulp plugin which minimises the single ES5 file (Babel's output). For more info check the [Gulp-uglify](https://www.npmjs.com/package/gulp-uglify) page on NPM.
 6. **Gulp-Sourcemaps** - A Gulp plugin utilizing the source maps tool. For more info check the [Gulp-sourcemaps](https://www.npmjs.com/package/gulp-sourcemaps) page on NPM.
 7. **Gulp-Rename** - A gulp plugin used to rename files. Used to rename the main module JS and to change the directory name of all HTML files. For more info check the [Gulp-rename](https://www.npmjs.com/package/gulp-rename) page on NPM.
@@ -98,7 +98,7 @@ This project's tests are run using the Jasmine framework and the Karma runner. T
     - **karma-coverage** - Code coverage generator. [Project repo.](https://github.com/karma-runner/karma-coverage)
     - **karma-coverage-istanbul-reporter** - Code coverage generator reporter. [NPM page.](https://www.npmjs.com/package/karma-coverage-istanbul-reporter)
     - **karma-sourcemap-loader** - A preprocessor that loads existing source maps. [NPM page.](https://www.npmjs.com/package/karma-sourcemap-loader)
-    - **karma-browserify** - A browserify preprocessor for karma, used to bundle up the tests. [NPM page.](https://www.npmjs.com/package/karma-browserify)
+    - **karma-rollup-preprocessor** - A rollup preprocessor for karma, used to bundle up the tests. [NPM page.](https://www.npmjs.com/package/karma-rollup-preprocessor)
 
 ### Production Dependencies
 
@@ -116,7 +116,7 @@ End-to-end tests are also written in TypeScript. All end-to-end tests are locate
 
 ### Running Tests
 
-Running tests is done through the dedicated Gulp task. All you need to do is run `gulp test` in the terminal; this will start Karma and trigger Browserify's compilation of tests and project files.
+Running tests is done through the dedicated Gulp task. All you need to do is run `gulp test` in the terminal; this will start Karma and trigger Rollup's compilation of tests and project files.
 
 Running end-to-end tests is also done through the dedicated gulp task. Running `gulp e2e` in the terminal will bundle up assets for testing, fire up the development server and run Protractor. Once Protractor is done testing, the development server is killed automatically by gulp.
 

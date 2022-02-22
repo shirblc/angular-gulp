@@ -29,6 +29,7 @@ import {
   BrowserDynamicTestingModule,
   platformBrowserDynamicTesting
 } from '@angular/platform-browser-dynamic/testing';
+import './app/app.module.ts';
 // test-placeholder
 
 // First, initialize the Angular testing environment.

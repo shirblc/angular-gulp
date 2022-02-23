@@ -6,7 +6,7 @@
 
 ## Version
 
-Version 1 (currently in development).
+Version 2.
 
 Built using the [gulp-site-template](https://github.com/shirblc/gulp-site-template) repo.
 

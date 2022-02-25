@@ -1,6 +1,7 @@
 # Angular-Gulp
 
 [![CircleCI](https://circleci.com/gh/shirblc/angular-gulp.svg?style=shield)](https://circleci.com/gh/shirblc/angular-gulp.svg)
+[![codecov](https://codecov.io/gh/shirblc/angular-gulp/graph/badge.svg)](https://codecov.io/gh/shirblc/angular-gulp)
 [![Known Vulnerabilities](https://snyk.io/test/github/shirblc/angular-gulp/badge.svg)](https://snyk.io/test/github/shirblc/angular-gulp)
 ![Libraries.io dependency status for GitHub repo](https://img.shields.io/librariesio/github/shirblc/angular-gulp)
 

@@ -22,19 +22,41 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import { Injectable } from '@angular/core';
+import { TestBed } from "@angular/core/testing";
+import { RouterTestingModule } from '@angular/router/testing';
+import {} from 'jasmine';
+import { APP_BASE_HREF } from '@angular/common';
+import {
+  BrowserDynamicTestingModule,
+  platformBrowserDynamicTesting
+} from "@angular/platform-browser-dynamic/testing";
 
-@Injectable({
-  providedIn: 'root'
-})
-export class SampleService {
-  constructor() {
+import { ErrorPage } from "./errorPage.component";
 
-  }
+describe('Sample', () => {
+  // Before each test, configure testing environment
+  beforeEach(() => {
+    TestBed.resetTestEnvironment();
+    TestBed.initTestEnvironment(BrowserDynamicTestingModule,
+        platformBrowserDynamicTesting());
 
-  logService() {
-    console.log("this is a sample service!");
+    TestBed.configureTestingModule({
+      imports: [
+        RouterTestingModule
+      ],
+      declarations: [
+        ErrorPage,
+      ],
+      providers: [
+        { provide: APP_BASE_HREF, useValue: '/' }
+      ]
+    }).compileComponents();
+  });
 
-    return 'logged!';
-  }
-}
+  // Check the page is created
+  it('should create the component', () => {
+    const fixture = TestBed.createComponent(ErrorPage);
+    const errorPage = fixture.componentInstance;
+    expect(errorPage).toBeTruthy();
+  });
+});

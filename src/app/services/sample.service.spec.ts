@@ -22,19 +22,42 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import { Injectable } from '@angular/core';
+import { TestBed } from "@angular/core/testing";
+import {
+  BrowserDynamicTestingModule,
+  platformBrowserDynamicTesting
+} from "@angular/platform-browser-dynamic/testing";
+import {} from 'jasmine';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class SampleService {
-  constructor() {
+import { SampleService } from './sample.service';
 
-  }
+describe('AdminService', () => {
+  let sampleService: SampleService;
 
-  logService() {
-    console.log("this is a sample service!");
+  // Before each test, configure testing environment
+  beforeEach(() => {
+    TestBed.resetTestEnvironment();
+    TestBed.initTestEnvironment(BrowserDynamicTestingModule,
+        platformBrowserDynamicTesting());
 
-    return 'logged!';
-  }
-}
+    TestBed.configureTestingModule({
+      imports: [],
+      providers: [
+        SampleService,
+      ]
+    }).compileComponents();
+
+    sampleService = TestBed.inject(SampleService);
+  });
+
+  // Check the service is created
+  it('should be created', () => {
+    expect(sampleService).toBeTruthy();
+  });
+
+  // Check the service is created
+  it('should log to the console', () => {
+    const response = sampleService.logService();
+    expect(response).toEqual('logged!');
+  });
+});

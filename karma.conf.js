@@ -21,7 +21,7 @@ module.exports = function (karma) {
     rollupPreprocessor: {
 			plugins: [
         coverage({
-          exclude: ['node_modules/**', '**/*.spec.ts', '**/*.mock.ts']
+          exclude: ['node_modules/**', '**/*.spec.ts', '**/*.mock.ts', 'src/tests.spec.ts']
         }),
         replaceTemplateUrl(),
   			typescript(),

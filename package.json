@@ -42,7 +42,7 @@
     "karma-rollup-preprocessor": "^7.0.8",
     "karma-sourcemap-loader": "^0.3.8",
     "magic-string": "^0.25.7",
-    "postcss": "^8.4.6",
+    "postcss": "^8.4.7",
     "protractor": "^7.0.0",
     "puppeteer": "^13.3.2",
     "rollup-plugin-istanbul": "^3.0.0",

@@ -90,32 +90,6 @@ function scripts()
       .pipe(gulp.dest("./localdev"));
 }
 
-//deals with transforming the scripts while in development mode
-function scriptsVendors()
-{
-	const options = {
-		input: 'src/vendor.js',
-		output: { sourcemap: true },
-		plugins: [
-			nodeResolve({
-				extensions: ['.js', '.ts']
-			}),
-			commonjs({
-				extensions: ['.js', '.ts'],
-				transformMixedEsModules: true
-			})
-    	]
-   	};
-
-	return rollupStream(options)
-      .pipe(source("src/vendor.js"))
-      .pipe(buffer())
-      .pipe(sourcemaps.init({loadMaps: true}))
-			.pipe(rename("vendor.bundle.js"))
-      .pipe(sourcemaps.write("./"))
-      .pipe(gulp.dest("./localdev"));
-}
-
 //watch files for changes and then run the appropriate tasks
 function watch()
 {
@@ -198,37 +172,13 @@ function scriptsDist()
       .pipe(gulp.dest("./dist"));
 }
 
-//deals with transforming the scripts while in development mode
-function scriptsVendorsDist()
-{
-	const options = {
-		input: 'src/vendor.js',
-		output: { sourcemap: true },
-		plugins: [
-			nodeResolve({extensions: ['.js', '.ts']}),
-			commonjs({
-				extensions: ['.js', '.ts'],
-				transformMixedEsModules: true
-			})
-    	]
-   	};
-
-	return rollupStream(options)
-      .pipe(source("src/vendor.js"))
-      .pipe(buffer())
-			.pipe(terser())
-			.pipe(rename("vendor.bundle.js"))
-      .pipe(gulp.dest("./dist"));
-}
-
 //prepare for distribution
 gulp.task('dist', gulp.parallel(
 	copyHtmlDist,
 	copyIndexDist,
 	copyImgsDist,
 	stylesDist,
-	scriptsDist,
-	scriptsVendorsDist
+	scriptsDist
 ));
 
 // TESTING TASKS
@@ -320,7 +270,6 @@ function stopDevServer() {
 // run e2e testing
 gulp.task('e2e', gulp.series(
 	scripts,
-	scriptsVendors,
 	copyHtml,
 	copyIndex,
 	copyImgs,
@@ -344,7 +293,6 @@ exports.copyIndex = copyIndex;
 exports.copyImgs = copyImgs;
 exports.styles = styles;
 exports.scripts = scripts;
-exports.scriptsVendors = scriptsVendors;
 exports.scriptsDist = scriptsDist;
 exports.unitTest = unitTest;
 exports.watch = watch;

@@ -23,8 +23,9 @@ Built using the [gulp-site-template](https://github.com/shirblc/gulp-site-templa
 2. cd into the project directory.
 3. cd into frontend.
 4. Run ```npm install``` to install dependencies.
-5. Run ```gulp serve``` to start the local server.
-6. Open localhost:3000.
+5. Run ```npm run compile:dev``` to compile for the files for local development.
+6. Run ```npm run serve``` to start the local server.
+7. Open localhost:3000.
 
 **For your convenience,** this project utilises Gulp's 'watch' functionality. In order to activate it  while developing, run ```gulp watch```. For more information about Gulp watch, check the [Gulp documentation](https://gulpjs.com/docs/en/getting-started/watching-files/).
 

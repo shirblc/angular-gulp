@@ -11,14 +11,13 @@ const rename = require("gulp-rename");
 const replace = require("gulp-replace");
 const path = require('path');
 const fs = require("fs");
-const execFile = require('child_process').execFile;
-const webdriverUpdate = require('protractor/node_modules/webdriver-manager/built/lib/cmds/update');
 var Server = require('karma').Server;
 let bs;
 const rollupStream = require("@rollup/stream");
 const commonjs = require("@rollup/plugin-commonjs");
 const nodeResolve = require("@rollup/plugin-node-resolve").nodeResolve;
 const typescript = require("@rollup/plugin-typescript");
+const { exec } = require("child_process");
 
 // LOCAL DEVELOPMENT TASKS
 // ===============================================
@@ -64,7 +63,7 @@ function scripts()
 		input: 'src/main.ts',
 		output: { sourcemap: true },
 		plugins: [
-			typescript(),
+			typescript({ exclude: ['**/*.spec.ts', 'e2e/**/*'] }),
 			nodeResolve({
 				extensions: ['.js', '.ts']
 			}),
@@ -99,6 +98,15 @@ function watch()
 	gulp.watch("src/css/*.css", styles);
 	gulp.watch("src/**/*.ts", scripts);
 }
+
+//prepare for local development
+gulp.task('localDev', gulp.parallel(
+	copyHtml,
+	copyIndex,
+	copyImgs,
+	styles,
+	scripts
+));
 
 // PRODUCTION TASKS
 // ===============================================
@@ -148,7 +156,7 @@ function scriptsDist()
 		input: 'src/main.ts',
 		output: { sourcemap: true },
 		plugins: [
-			typescript(),
+			typescript({ exclude: ['**/*.spec.ts', 'e2e/**/*'] }),
 			nodeResolve({
 				extensions: ['.js', '.ts']
 			}),
@@ -230,52 +238,47 @@ gulp.task('test', gulp.series(
 	unitTest
 ))
 
-// run development server & protractor
-async function runProtractor() {
+// boot up the server for e2e testing - headless
+async function e2eServe() {
 	bs = browserSync.init({
 		server: {
 			baseDir: "./localdev"
 		},
-		single: true
+		single: true,
+		open: false,
+		ui: false
+	});
+
+	await bs;
+}
+
+// run e2e tests
+async function e2e() {
+	// compile
+	copyHtml();
+	copyIndex();
+	copyImgs();
+	styles();
+	await scripts();
+
+	// serve
+	e2eServe();
+
+	// run cypress
+	await exec('npm run cypress', (error, stdout, stderr) => {
+		if (error) {
+        console.log(`error: ${error.message}`);
+    }
+    if (stderr) {
+        console.log(`stderr: ${stderr}`);
+    }
+    console.log(`stdout: ${stdout}`);
+
+		if(bs) {
+			bs.cleanup();
+		}
 	})
-
-	// update webdriver
-	await webdriverUpdate.program.run({
-			standalone: false,
-			gecko: false,
-			quiet: true,
-	});
-
-	// run protractor
-	await execFile('./node_modules/protractor/bin/protractor', ['./e2e/protractor.conf.js'], (error, stdout, stderr) => {
-	    if (error) {
-	        console.error('error: ', stderr);
-	        throw error;
-	    }
-			else {
-				console.log(stdout);
-				stopDevServer();
-			}
-	});
 }
-
-// stop the development server
-function stopDevServer() {
-	if(bs) {
-		bs.cleanup();
-		process.exit();
-	}
-}
-
-// run e2e testing
-gulp.task('e2e', gulp.series(
-	scripts,
-	copyHtml,
-	copyIndex,
-	copyImgs,
-	styles,
-	runProtractor
-))
 
 //boot up the server
 gulp.task("serve", function() {
@@ -296,3 +299,4 @@ exports.scripts = scripts;
 exports.scriptsDist = scriptsDist;
 exports.unitTest = unitTest;
 exports.watch = watch;
+exports.e2e = e2e;

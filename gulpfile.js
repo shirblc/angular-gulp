@@ -11,8 +11,6 @@ const rename = require("gulp-rename");
 const replace = require("gulp-replace");
 const path = require('path');
 const fs = require("fs");
-const execFile = require('child_process').execFile;
-const webdriverUpdate = require('protractor/node_modules/webdriver-manager/built/lib/cmds/update');
 var Server = require('karma').Server;
 let bs;
 const rollupStream = require("@rollup/stream");
@@ -99,6 +97,15 @@ function watch()
 	gulp.watch("src/css/*.css", styles);
 	gulp.watch("src/**/*.ts", scripts);
 }
+
+//prepare for local development
+gulp.task('localDev', gulp.parallel(
+	copyHtml,
+	copyIndex,
+	copyImgs,
+	styles,
+	scripts
+));
 
 // PRODUCTION TASKS
 // ===============================================
@@ -230,52 +237,19 @@ gulp.task('test', gulp.series(
 	unitTest
 ))
 
-// run development server & protractor
-async function runProtractor() {
+// boot up the server for e2e testing - headless
+async function e2eServe() {
 	bs = browserSync.init({
 		server: {
 			baseDir: "./localdev"
 		},
-		single: true
-	})
-
-	// update webdriver
-	await webdriverUpdate.program.run({
-			standalone: false,
-			gecko: false,
-			quiet: true,
+		single: true,
+		open: false,
+		ui: false
 	});
 
-	// run protractor
-	await execFile('./node_modules/protractor/bin/protractor', ['./e2e/protractor.conf.js'], (error, stdout, stderr) => {
-	    if (error) {
-	        console.error('error: ', stderr);
-	        throw error;
-	    }
-			else {
-				console.log(stdout);
-				stopDevServer();
-			}
-	});
+	await bs;
 }
-
-// stop the development server
-function stopDevServer() {
-	if(bs) {
-		bs.cleanup();
-		process.exit();
-	}
-}
-
-// run e2e testing
-gulp.task('e2e', gulp.series(
-	scripts,
-	copyHtml,
-	copyIndex,
-	copyImgs,
-	styles,
-	runProtractor
-))
 
 //boot up the server
 gulp.task("serve", function() {
@@ -296,3 +270,4 @@ exports.scripts = scripts;
 exports.scriptsDist = scriptsDist;
 exports.unitTest = unitTest;
 exports.watch = watch;
+exports.e2eServe = e2eServe;

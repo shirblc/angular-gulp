@@ -22,14 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import { browser } from 'protractor';
-
 describe('Angular-Gulp App', function() {
   it('should have a title', function() {
-    browser.get('http://localhost:3000/');
-
-    browser.getTitle().then((title) => {
-      expect(title).toEqual('Untitled Document');
-    })
+    cy.visit('http://localhost:3000/');
+    cy.title().should('equal', 'Untitled Document');
   });
 });

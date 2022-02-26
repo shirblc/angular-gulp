@@ -2,6 +2,7 @@ version: 2.1
 orbs:
   node: circleci/node@1.1
   browser-tools: circleci/browser-tools@1.1.1
+  cypress: cypress-io/cypress@1
 jobs:
   test:
     docker:
@@ -32,6 +33,7 @@ jobs:
        - browser-tools/install-chrome
        - browser-tools/install-chromedriver
        - run: google-chrome --version
+       - cypress/install
        - restore_cache:
            key: my-project-{{ .Branch }}-{{ checksum "package-lock.json" }}
        - run:

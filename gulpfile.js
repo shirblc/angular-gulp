@@ -63,7 +63,7 @@ function scripts()
 		input: 'src/main.ts',
 		output: { sourcemap: true },
 		plugins: [
-			typescript(),
+			typescript({ exclude: ['**/*.spec.ts', 'e2e/**/*'] }),
 			nodeResolve({
 				extensions: ['.js', '.ts']
 			}),
@@ -156,7 +156,7 @@ function scriptsDist()
 		input: 'src/main.ts',
 		output: { sourcemap: true },
 		plugins: [
-			typescript(),
+			typescript({ exclude: ['**/*.spec.ts', 'e2e/**/*'] }),
 			nodeResolve({
 				extensions: ['.js', '.ts']
 			}),

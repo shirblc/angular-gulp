@@ -24,7 +24,7 @@ module.exports = function (karma) {
           exclude: ['node_modules/**', '**/*.spec.ts', '**/*.mock.ts', 'src/tests.spec.ts']
         }),
         replaceTemplateUrl(),
-  			typescript(),
+  			typescript({ exclude: ['e2e/**/*'] }),
   			nodeResolve({
   				extensions: ['.js', '.ts']
   			}),

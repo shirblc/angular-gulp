@@ -17,6 +17,7 @@ const rollupStream = require("@rollup/stream");
 const commonjs = require("@rollup/plugin-commonjs");
 const nodeResolve = require("@rollup/plugin-node-resolve").nodeResolve;
 const typescript = require("@rollup/plugin-typescript");
+const { exec } = require("child_process");
 
 // LOCAL DEVELOPMENT TASKS
 // ===============================================
@@ -251,6 +252,34 @@ async function e2eServe() {
 	await bs;
 }
 
+// run e2e tests
+async function e2e() {
+	// compile
+	copyHtml();
+	copyIndex();
+	copyImgs();
+	styles();
+	await scripts();
+
+	// serve
+	e2eServe();
+
+	// run cypress
+	await exec('npm run cypress', (error, stdout, stderr) => {
+		if (error) {
+        console.log(`error: ${error.message}`);
+    }
+    if (stderr) {
+        console.log(`stderr: ${stderr}`);
+    }
+    console.log(`stdout: ${stdout}`);
+
+		if(bs) {
+			bs.cleanup();
+		}
+	})
+}
+
 //boot up the server
 gulp.task("serve", function() {
 	browserSync.init({
@@ -270,4 +299,4 @@ exports.scripts = scripts;
 exports.scriptsDist = scriptsDist;
 exports.unitTest = unitTest;
 exports.watch = watch;
-exports.e2eServe = e2eServe;
+exports.e2e = e2e;

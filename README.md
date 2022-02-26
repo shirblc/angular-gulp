@@ -100,6 +100,7 @@ This project's tests are run using the Jasmine framework and the Karma runner. T
     - **karma-coverage-istanbul-reporter** - Code coverage generator reporter. [NPM page.](https://www.npmjs.com/package/karma-coverage-istanbul-reporter)
     - **karma-sourcemap-loader** - A preprocessor that loads existing source maps. [NPM page.](https://www.npmjs.com/package/karma-sourcemap-loader)
     - **karma-rollup-preprocessor** - A rollup preprocessor for karma, used to bundle up the tests. [NPM page.](https://www.npmjs.com/package/karma-rollup-preprocessor)
+3. **Cypress** - An open-source test runner, used primarily for e2e and integration tests. For more information, check their [official documentation](https://docs.cypress.io).
 
 ### Production Dependencies
 
@@ -113,13 +114,13 @@ This project's tests are run using the Jasmine framework and the Karma runner. T
 
 Tests are written in TypeScript and each component's tests are located in the same directory as the component. Test files' names follow this format: `<component_name>.spec.ts`. This format is the way tests are picked up by the main testing file, and so it's important to keep to it.
 
-End-to-end tests are also written in TypeScript. All end-to-end tests are located in [e2e/src](./e2e/src), and are named in a similar manner to regular specs files: `<something_to_test>.spec.ts`. Protractor's configuration file is located in the e2e directory, along with the tests directory.
+End-to-end tests are also written in TypeScript. All end-to-end tests are located in [e2e/src](./e2e/src), and are named in a similar manner to regular specs files: `<something_to_test>.spec.ts`. The Cypress config is in the root (in `cypress.json`), but the plugins and support files are in the [e2e](./e2e) folder as well.
 
 ### Running Tests
 
 Running tests is done through the dedicated Gulp task. All you need to do is run `gulp test` in the terminal; this will start Karma and trigger Rollup's compilation of tests and project files.
 
-Running end-to-end tests is also done through the dedicated gulp task. Running `gulp e2e` in the terminal will bundle up assets for testing, fire up the development server and run Protractor. Once Protractor is done testing, the development server is killed automatically by gulp.
+Running end-to-end tests is done through an npm script. Running `npm run e2e` in the terminal will bundle up assets for testing, fire up the development server and run Cypress.
 
 ## Hosting
 

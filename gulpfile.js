@@ -18,6 +18,7 @@ const commonjs = require("@rollup/plugin-commonjs");
 const nodeResolve = require("@rollup/plugin-node-resolve").nodeResolve;
 const typescript = require("@rollup/plugin-typescript");
 const { exec } = require("child_process");
+const setProductionEnv = require("./processor").setProductionEnv;
 
 // LOCAL DEVELOPMENT TASKS
 // ===============================================
@@ -156,6 +157,7 @@ function scriptsDist()
 		input: 'src/main.ts',
 		output: { sourcemap: true },
 		plugins: [
+			setProductionEnv(),
 			typescript({ exclude: ['**/*.spec.ts', 'e2e/**/*'] }),
 			nodeResolve({
 				extensions: ['.js', '.ts']

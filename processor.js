@@ -21,10 +21,10 @@ exports.replaceTemplateUrl = function() {
       const magicString  = new MagicString(code);
       let tempString = magicString.toString();
 
-      const componentNames = tempString.match(/(templateUrl:'.)(.*)(.component.html')/g);
+      const componentNames = tempString.match(/(templateUrl:'.)(.*)(.component.html')/);
 
       if(componentNames) {
-        const start = tempString.indexOf(componentNames[0]);
+        const start = componentNames.index;
         const end = start + componentNames[0].length;
 
         const componentName = componentNames[0].substring(15, componentNames[0].length-16);

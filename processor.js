@@ -19,30 +19,19 @@ exports.replaceTemplateUrl = function() {
     name: 'replacer',
     transform(code) {
       const magicString  = new MagicString(code);
-      let tempString = magicString.toString();
 
-      const componentNames = tempString.match(/(templateUrl:'.)(.*)(.component.html')/);
+      magicString.replace(/(templateUrl:'.)(.*)(.component.html')/, (match) => {
+        const componentName = match.substring(15, match.length-16);
+        if(componentName == 'my') return match;
 
-      if(componentNames) {
-        const start = componentNames.index;
-        const end = start + componentNames[0].length;
+        const componentTemplateURL = componentName == 'app'
+          ? __dirname + `/src/app/${componentName}.component.html`
+          : __dirname + `/src/app/components/${componentName}/${componentName}.component.html`;
 
-        const componentName = componentNames[0].substring(15, componentNames[0].length-16);
-        if(componentName == 'my') return;
+        componentTemplate = fs.readFileSync(componentTemplateURL);
 
-        let componentTemplate;
-
-        if(componentName == 'app') {
-          componentTemplate = fs.readFileSync(__dirname + `/src/app/${componentName}.component.html`);
-        }
-        else {
-          componentTemplate = fs.readFileSync(__dirname + `/src/app/components/${componentName}/${componentName}.component.html`);
-        }
-
-        let newString = `template: \`${componentTemplate}\``
-
-        magicString.overwrite(start, end, newString);
-      }
+        return `template: \`${componentTemplate}\``;
+      })
 
       return {
         code: magicString.toString(),

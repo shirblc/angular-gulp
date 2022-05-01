@@ -3,7 +3,8 @@
 [![CircleCI](https://circleci.com/gh/shirblc/angular-gulp.svg?style=shield)](https://circleci.com/gh/shirblc/angular-gulp.svg)
 [![codecov](https://codecov.io/gh/shirblc/angular-gulp/graph/badge.svg)](https://codecov.io/gh/shirblc/angular-gulp)
 [![Known Vulnerabilities](https://snyk.io/test/github/shirblc/angular-gulp/badge.svg)](https://snyk.io/test/github/shirblc/angular-gulp)
-![Libraries.io dependency status for GitHub repo](https://img.shields.io/librariesio/github/shirblc/angular-gulp)
+[![Depfu](https://badges.depfu.com/badges/b307d8069a5f84dba24fafb68c1a3d21/overview.svg)](https://depfu.com/github/shirblc/angular-gulp?project_id=35167)
+[![Depfu](https://badges.depfu.com/badges/b307d8069a5f84dba24fafb68c1a3d21/count.svg)](https://depfu.com/github/shirblc/angular-gulp?project_id=35167)
 
 ## Version
 

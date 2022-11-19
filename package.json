@@ -63,7 +63,7 @@
     "@angular/platform-browser-dynamic": "^14.2.10",
     "@angular/router": "^14.2.10",
     "compression": "^1.7.4",
-    "core-js": "^3.26.0",
+    "core-js": "^3.26.1",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "rxjs": "^7.5.7",

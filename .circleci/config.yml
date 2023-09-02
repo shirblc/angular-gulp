@@ -1,7 +1,7 @@
 version: 2.1
 orbs:
   node: circleci/node@1.1
-  browser-tools: circleci/browser-tools@1.4.2
+  browser-tools: circleci/browser-tools@1.4.4
   cypress: cypress-io/cypress@1
   codecov: codecov/codecov@3.1.1
 jobs:
@@ -12,7 +12,10 @@ jobs:
       CHROME_BIN: /usr/bin/google-chrome
     steps:
       - checkout
-      - browser-tools/install-chrome
+      - browser-tools/install-chrome:
+          # TODO: remove following line when fixed https://github.com/CircleCI-Public/browser-tools-orb/issues/90
+          # From https://github.com/CircleCI-Public/browser-tools-orb/issues/90#issuecomment-1698052540
+          chrome-version: 116.0.5845.96
       - browser-tools/install-chromedriver
       - run: google-chrome --version
       - restore_cache:
@@ -31,7 +34,10 @@ jobs:
        CHROME_BIN: /usr/bin/google-chrome
      steps:
        - checkout
-       - browser-tools/install-chrome
+       - browser-tools/install-chrome:
+          # TODO: remove following line when fixed https://github.com/CircleCI-Public/browser-tools-orb/issues/90
+          # From https://github.com/CircleCI-Public/browser-tools-orb/issues/90#issuecomment-1698052540
+          chrome-version: 116.0.5845.96
        - browser-tools/install-chromedriver
        - run: google-chrome --version
        - cypress/install

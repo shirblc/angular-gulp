@@ -12,6 +12,7 @@ jobs:
       CHROME_BIN: /usr/bin/google-chrome
     steps:
       - checkout
+      - run: sudo apt-get update
       - browser-tools/install-chrome:
           # TODO: remove following line when fixed https://github.com/CircleCI-Public/browser-tools-orb/issues/90
           # From https://github.com/CircleCI-Public/browser-tools-orb/issues/90#issuecomment-1698052540
@@ -34,6 +35,7 @@ jobs:
        CHROME_BIN: /usr/bin/google-chrome
      steps:
        - checkout
+       - run: sudo apt-get update
        - browser-tools/install-chrome:
           # TODO: remove following line when fixed https://github.com/CircleCI-Public/browser-tools-orb/issues/90
           # From https://github.com/CircleCI-Public/browser-tools-orb/issues/90#issuecomment-1698052540

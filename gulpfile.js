@@ -2,7 +2,6 @@ const gulp = require("gulp");
 const postcss = require("gulp-postcss");
 const autoprefixer = require("autoprefixer");
 const terser = require("gulp-terser");
-const sourcemaps = require("gulp-sourcemaps");
 const browserSync = require("browser-sync").create();
 const source = require("vinyl-source-stream");
 const buffer = require("vinyl-buffer");
@@ -18,6 +17,7 @@ const nodeResolve = require("@rollup/plugin-node-resolve").nodeResolve;
 const typescript = require("@rollup/plugin-typescript");
 const { exec } = require("child_process");
 const setProductionEnv = require("./processor").setProductionEnv;
+const updateComponentTemplateUrl = require("./processor").updateComponentTemplateUrl;
 
 // LOCAL DEVELOPMENT TASKS
 // ===============================================
@@ -63,6 +63,7 @@ function scripts()
 		input: 'src/main.ts',
 		output: { sourcemap: 'inline' },
 		plugins: [
+			updateComponentTemplateUrl(),
 			typescript({ exclude: ['**/*.spec.ts', 'e2e/**/*'] }),
 			nodeResolve({
 				extensions: ['.js', '.ts']
@@ -77,14 +78,7 @@ function scripts()
 	return rollupStream(options)
       .pipe(source("src/main.ts"))
       .pipe(buffer())
-      .pipe(sourcemaps.init({loadMaps: true}))
-			.pipe(replace(/(templateUrl: '.)(.*)(.component.html)/g, (match) => {
-				let componentName = match.substring(15, match.length-15);
-				let newString = `templateUrl: './app/${componentName}.component.html`
-				return newString;
-			}))
 			.pipe(rename("app.bundle.js"))
-      .pipe(sourcemaps.write("./"))
       .pipe(gulp.dest("./localdev"));
 }
 
@@ -155,6 +149,7 @@ function scriptsDist()
 		input: 'src/main.ts',
 		output: { sourcemap: 'hidden' },
 		plugins: [
+			updateComponentTemplateUrl(),
 			setProductionEnv(),
 			typescript({ exclude: ['**/*.spec.ts', 'e2e/**/*'] }),
 			nodeResolve({
@@ -170,11 +165,6 @@ function scriptsDist()
 	return rollupStream(options)
       .pipe(source("src/main.ts"))
       .pipe(buffer())
-			.pipe(replace(/(templateUrl: '.)(.*)(.component.html)/g, (match) => {
-						let componentName = match.substring(15, match.length-15);
-						let newString = `templateUrl: './app/${componentName}.component.html`
-						return newString;
-					}))
 			.pipe(terser())
 			.pipe(rename("app.bundle.min.js"))
       .pipe(gulp.dest("./dist"));

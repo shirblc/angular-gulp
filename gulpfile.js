@@ -18,7 +18,6 @@ const typescript = require("@rollup/plugin-typescript");
 const { exec } = require("child_process");
 const setProductionEnv = require("./processor").setProductionEnv;
 const updateComponentTemplateUrl = require("./processor").updateComponentTemplateUrl;
-const less = require("gulp-less");
 
 // LOCAL DEVELOPMENT TASKS
 // ===============================================
@@ -47,12 +46,12 @@ function copyImgs()
 		.pipe(gulp.dest("localdev/assets/img"));
 }
 
-//converts the less files to css and adds prefixes with Autoprefixer
+//sets gulp to add prefixes with Autoprefixer after Dreamweaver outputs the Sass filee to CSS
+//once the prefixer finishes its job, outputs the file to the distribution folder
 function styles()
 {
 	return gulp
-		.src("src/styles/*.less")
-		.pipe(less())
+		.src("src/css/*.css")
 		.pipe(postcss([autoprefixer()]))
 		.pipe(gulp.dest("./localdev/css"));
 }
@@ -133,12 +132,12 @@ function copyImgsDist()
 		.pipe(gulp.dest("dist/assets/img"));
 }
 
-//converts the less files to css and adds prefixes with Autoprefixer
+//sets gulp to add prefixes with Autoprefixer after Dreamweaver outputs the Sass filee to CSS
+//once the prefixer finishes its job, outputs the file to the distribution folder
 function stylesDist()
 {
 	return gulp
-		.src("src/styles/*.less")
-		.pipe(less())
+		.src("src/css/*.css")
 		.pipe(postcss([autoprefixer()]))
 		.pipe(gulp.dest("./dist/css"));
 }

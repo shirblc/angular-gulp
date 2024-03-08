@@ -46,8 +46,7 @@ function copyImgs()
 		.pipe(gulp.dest("localdev/assets/img"));
 }
 
-//sets gulp to add prefixes with Autoprefixer after Dreamweaver outputs the Sass filee to CSS
-//once the prefixer finishes its job, outputs the file to the distribution folder
+//sets gulp to add prefixes with Autoprefixer to the CSS
 function styles()
 {
 	return gulp
@@ -132,8 +131,7 @@ function copyImgsDist()
 		.pipe(gulp.dest("dist/assets/img"));
 }
 
-//sets gulp to add prefixes with Autoprefixer after Dreamweaver outputs the Sass filee to CSS
-//once the prefixer finishes its job, outputs the file to the distribution folder
+//sets gulp to add prefixes with Autoprefixer to the CSS
 function stylesDist()
 {
 	return gulp

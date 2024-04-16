@@ -48,7 +48,7 @@ function copyIndex()
 function copyImgs()
 {
 	return gulp
-		.src("src/assets/img/*")
+		.src("src/assets/img/*", { encoding: false })
 		.pipe(gulp.dest("localdev/assets/img"));
 }
 
@@ -133,7 +133,7 @@ function copyIndexDist()
 function copyImgsDist()
 {
 	return gulp
-		.src("src/assets/img/*")
+		.src("src/assets/img/*", { encoding: false })
 		.pipe(gulp.dest("dist/assets/img"));
 }
 

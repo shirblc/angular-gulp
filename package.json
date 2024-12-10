@@ -47,7 +47,7 @@
     "karma-jasmine-html-reporter": "^2.1.0",
     "karma-rollup-preprocessor": "^7.0.8",
     "karma-sourcemap-loader": "^0.4.0",
-    "magic-string": "^0.30.14",
+    "magic-string": "^0.30.15",
     "postcss": "^8.4.49",
     "puppeteer": "^23.10.1",
     "rollup": "^4.28.1",
